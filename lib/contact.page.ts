@@ -1,5 +1,7 @@
 import { type Page, type Locator, expect } from '@playwright/test';
 
+type ContactFormButtons = 'contactSales' | 'getStarted';
+
 type FormFields = 'firstName' | 'lastName' | 'email' | 'company' | 'message';
 
 type Checkboxes =
@@ -13,6 +15,7 @@ type Checkboxes =
 
 export class ContactPage {
   private readonly contactSalesButton: Locator;
+  private readonly getStartedEmailInput: Locator;
   private readonly getStartedButton: Locator;
   private readonly firstNameInput: Locator;
   private readonly lastNameInput: Locator;
@@ -29,6 +32,9 @@ export class ContactPage {
   private readonly getStartedSubmitButton: Locator;
   private readonly successPopUp: Locator;
 
+  private contactFormButtonsLocatorsMap: {
+    [key in ContactFormButtons]: Locator;
+  };
   private formFieldsLocatorsMap: { [key in FormFields]: Locator };
   private checkboxesLocatorsMap: { [key in Checkboxes]: Locator };
 
@@ -36,7 +42,16 @@ export class ContactPage {
     this.contactSalesButton = page.getByRole('button', {
       name: 'Contact Sales',
     });
-    this.getStartedButton = page.getByPlaceholder('Enter your email address');
+    this.getStartedEmailInput = page.getByPlaceholder(
+      'Enter your email address',
+    );
+    this.getStartedButton = page
+      .locator('section')
+      .filter({
+        hasText:
+          'The Future of Inflight LogisticsThe only end to end inflight logistics software',
+      })
+      .getByRole('button');
     this.firstNameInput = page.getByPlaceholder('First Name');
     this.lastNameInput = page.getByPlaceholder('Last Name');
     this.emailInput = page.getByPlaceholder('Email Address', { exact: true });
@@ -73,6 +88,11 @@ export class ContactPage {
       .getByRole('button');
     this.successPopUp = page.getByText("Thanks!We'll be right with");
 
+    this.contactFormButtonsLocatorsMap = {
+      contactSales: this.contactSalesButton,
+      getStarted: this.getStartedButton,
+    };
+
     this.formFieldsLocatorsMap = {
       firstName: this.firstNameInput,
       lastName: this.lastNameInput,
@@ -98,8 +118,16 @@ export class ContactPage {
     await this.page.goto('https://test.limeflight.com/');
   }
 
-  async openContactForm() {
-    await this.contactSalesButton.click();
+  async openContactForm(element: ContactFormButtons = 'contactSales') {
+    await this.contactFormButtonsLocatorsMap[element].click();
+  }
+
+  async isFormOpen() {
+    await expect(this.firstNameInput).toBeInViewport();
+  }
+
+  async enterEmailToGetStarted(email: string) {
+    await this.getStartedEmailInput.fill(email);
   }
 
   async submit() {
@@ -122,6 +150,10 @@ export class ContactPage {
 
   async hasFocus(element: FormFields) {
     await expect(this.formFieldsLocatorsMap[element]).toBeFocused();
+  }
+
+  async hasValue(element: FormFields, text: string) {
+    await expect(this.formFieldsLocatorsMap[element]).toHaveValue(text);
   }
 
   // Checkboxes

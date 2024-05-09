@@ -3,6 +3,35 @@ import { test } from '../lib/fixtures';
 import { faker } from '@faker-js/faker';
 
 test.describe('Contact form', () => {
+  test.describe('opening', () => {
+    test('form can be open using Contact Sales button', async ({
+      contactPage,
+    }) => {
+      await contactPage.openContactForm('contactSales');
+
+      await contactPage.isFormOpen();
+    });
+
+    test('form can be open using Get Started button', async ({
+      contactPage,
+    }) => {
+      await contactPage.openContactForm('getStarted');
+
+      await contactPage.isFormOpen();
+    });
+
+    test('form can be open using Get Started button with email populated', async ({
+      contactPage,
+    }) => {
+      const email = faker.internet.email();
+      await contactPage.enterEmailToGetStarted(email);
+      await contactPage.openContactForm('getStarted');
+
+      await contactPage.isFormOpen();
+      await contactPage.hasValue('email', email);
+    });
+  });
+
   test.describe('submission', () => {
     test('can be submitted succesfully with correct data', async ({
       contactPage,
