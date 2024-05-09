@@ -2,6 +2,7 @@ import { type Page, type Locator, expect } from '@playwright/test';
 
 export class ContactPage {
   private readonly contactSalesButton: Locator;
+  private readonly getStartedButton: Locator;
   private readonly firstNameInput: Locator;
   private readonly lastNameInput: Locator;
   private readonly emailInput: Locator;
@@ -14,13 +15,14 @@ export class ContactPage {
   private readonly inventoryManagementModule: Locator;
   private readonly routeOptimizationModule: Locator;
   private readonly communicationCheckbox: Locator;
-  private readonly getStartedButton: Locator;
+  private readonly getStartedSubmitButton: Locator;
   private readonly successPopUp: Locator;
 
   constructor(public readonly page: Page) {
     this.contactSalesButton = page.getByRole('button', {
       name: 'Contact Sales',
     });
+    this.getStartedButton = page.getByPlaceholder('Enter your email address');
     this.firstNameInput = page.getByPlaceholder('First Name');
     this.lastNameInput = page.getByPlaceholder('Last Name');
     this.emailInput = page.getByPlaceholder('Email Address', { exact: true });
@@ -51,7 +53,7 @@ export class ContactPage {
       .filter({ hasText: 'RouteOptimization' })
       .locator('div');
     this.communicationCheckbox = page.getByLabel('I agree to receive other');
-    this.getStartedButton = page
+    this.getStartedSubmitButton = page
       .locator('form')
       .filter({ hasText: 'Get Started with LimeFlight!' })
       .getByRole('button');
@@ -81,10 +83,32 @@ export class ContactPage {
   }
 
   async submit() {
-    await this.getStartedButton.click();
+    await this.getStartedSubmitButton.click();
   }
 
-  async hasBeenSubmittedSuccesfully() {
-    await expect(this.successPopUp).toBeVisible();
+  async isSuccessPopUpVisible(visible = true) {
+    await expect(this.successPopUp).toBeVisible({ visible });
+  }
+
+  async hasFocus(
+    element: 'firstName' | 'lastName' | 'email' | 'company' | 'message',
+  ) {
+    switch (element) {
+      case 'firstName':
+        await expect(this.firstNameInput).toBeFocused();
+        break;
+      case 'lastName':
+        await expect(this.lastNameInput).toBeFocused();
+        break;
+      case 'email':
+        await expect(this.emailInput).toBeFocused();
+        break;
+      case 'company':
+        await expect(this.companyInput).toBeFocused();
+        break;
+      case 'message':
+        await expect(this.messageInput).toBeFocused();
+        break;
+    }
   }
 }
