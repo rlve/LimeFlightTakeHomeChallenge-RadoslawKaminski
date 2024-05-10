@@ -2,6 +2,8 @@ import { expect } from '@playwright/test';
 import { test } from '../lib/fixtures';
 import { faker } from '@faker-js/faker';
 
+test.describe.configure({ mode: 'parallel' });
+
 test.describe('Contact form', () => {
   test.describe('opening', () => {
     test('form can be open using Contact Sales button', async ({
