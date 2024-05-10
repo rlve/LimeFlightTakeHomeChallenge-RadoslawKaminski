@@ -1,4 +1,3 @@
-import { expect } from '@playwright/test';
 import { test } from '../lib/fixtures';
 import { faker } from '@faker-js/faker';
 
@@ -30,7 +29,7 @@ test.describe('Contact form', () => {
       await contactPage.openContactForm('getStarted');
 
       await contactPage.isFormOpen();
-      await contactPage.hasValue('email', email);
+      await contactPage.hasFormFieldValue('email', email);
     });
 
     test('form can be closed', async ({ contactPage }) => {
@@ -61,11 +60,11 @@ test.describe('Contact form', () => {
       await contactPage.openContactForm();
 
       await contactPage.isFormOpen();
-      await contactPage.hasValue('firstName', data.firstName);
-      await contactPage.hasValue('lastName', data.lastName);
-      await contactPage.hasValue('email', data.email);
-      await contactPage.hasValue('company', data.company);
-      await contactPage.hasValue('message', data.message);
+      await contactPage.hasFormFieldValue('firstName', data.firstName);
+      await contactPage.hasFormFieldValue('lastName', data.lastName);
+      await contactPage.hasFormFieldValue('email', data.email);
+      await contactPage.hasFormFieldValue('company', data.company);
+      await contactPage.hasFormFieldValue('message', data.message);
     });
   });
 
@@ -74,15 +73,7 @@ test.describe('Contact form', () => {
       contactPage,
     }) => {
       await contactPage.openContactForm();
-
-      await contactPage.fillForm({
-        firstName: faker.person.firstName(),
-        lastName: faker.person.lastName(),
-        email: faker.internet.email(),
-        company: faker.company.name(),
-        message: faker.lorem.paragraph(),
-      });
-
+      await contactPage.fillFormDefaultValues();
       await contactPage.submit();
 
       await contactPage.isSuccessPopUpVisible();
@@ -92,17 +83,8 @@ test.describe('Contact form', () => {
       contactPage,
     }) => {
       await contactPage.openContactForm();
-
-      await contactPage.fillForm({
-        firstName: faker.person.firstName(),
-        lastName: faker.person.lastName(),
-        email: faker.internet.email(),
-        company: faker.company.name(),
-        message: faker.lorem.paragraph(),
-      });
-
+      await contactPage.fillFormDefaultValues();
       await contactPage.uncheckModules();
-
       await contactPage.submit();
 
       await contactPage.isSuccessPopUpVisible();
@@ -112,17 +94,8 @@ test.describe('Contact form', () => {
       contactPage,
     }) => {
       await contactPage.openContactForm();
-
-      await contactPage.fillForm({
-        firstName: faker.person.firstName(),
-        lastName: faker.person.lastName(),
-        email: faker.internet.email(),
-        company: faker.company.name(),
-        message: faker.lorem.paragraph(),
-      });
-
+      await contactPage.fillFormDefaultValues();
       await contactPage.uncheckElement('communication');
-
       await contactPage.submit();
 
       await contactPage.isSuccessPopUpVisible();
@@ -133,22 +106,14 @@ test.describe('Contact form', () => {
       'clears the form after succesfull submission',
       async ({ contactPage }) => {
         await contactPage.openContactForm();
-
-        await contactPage.fillForm({
-          firstName: faker.person.firstName(),
-          lastName: faker.person.lastName(),
-          email: faker.internet.email(),
-          company: faker.company.name(),
-          message: faker.lorem.paragraph(),
-        });
-
+        await contactPage.fillFormDefaultValues();
         await contactPage.submit();
-
         await contactPage.isSuccessPopUpVisible();
 
         await contactPage.closeSuccessPopUp();
         await contactPage.openContactForm();
-        await contactPage.hasValue('firstName', '');
+
+        await contactPage.hasFormFieldValue('firstName', '');
       },
     );
   });
@@ -156,55 +121,48 @@ test.describe('Contact form', () => {
   test.describe('validation', () => {
     test('first name cannot be empty', async ({ contactPage }) => {
       await contactPage.openContactForm();
-
       await contactPage.fillForm({
         lastName: faker.person.lastName(),
         email: faker.internet.email(),
         company: faker.company.name(),
         message: faker.lorem.paragraph(),
       });
-
       await contactPage.submit();
 
       await contactPage.isSuccessPopUpVisible(false);
-      await contactPage.hasFocus('firstName');
+      await contactPage.hasFormFieldFocus('firstName');
     });
 
     test('last name cannot be empty', async ({ contactPage }) => {
       await contactPage.openContactForm();
-
       await contactPage.fillForm({
         firstName: faker.person.firstName(),
         email: faker.internet.email(),
         company: faker.company.name(),
         message: faker.lorem.paragraph(),
       });
-
       await contactPage.submit();
 
       await contactPage.isSuccessPopUpVisible(false);
-      await contactPage.hasFocus('lastName');
+      await contactPage.hasFormFieldFocus('lastName');
     });
 
     test('email cannot be empty', async ({ contactPage }) => {
       await contactPage.openContactForm();
-
       await contactPage.fillForm({
         firstName: faker.person.firstName(),
         lastName: faker.person.lastName(),
         company: faker.company.name(),
         message: faker.lorem.paragraph(),
       });
-
       await contactPage.submit();
 
       await contactPage.isSuccessPopUpVisible(false);
-      await contactPage.hasFocus('email');
+      await contactPage.hasFormFieldFocus('email');
     });
 
     test('email has to have correct format', async ({ contactPage }) => {
       await contactPage.openContactForm();
-
       await contactPage.fillForm({
         firstName: faker.person.firstName(),
         lastName: faker.person.lastName(),
@@ -212,43 +170,38 @@ test.describe('Contact form', () => {
         company: faker.company.name(),
         message: faker.lorem.paragraph(),
       });
-
       await contactPage.submit();
 
       await contactPage.isSuccessPopUpVisible(false);
-      await contactPage.hasFocus('email');
+      await contactPage.hasFormFieldFocus('email');
     });
 
     test('company cannot be empty', async ({ contactPage }) => {
       await contactPage.openContactForm();
-
       await contactPage.fillForm({
         firstName: faker.person.firstName(),
         lastName: faker.person.lastName(),
         email: faker.internet.email(),
         message: faker.lorem.paragraph(),
       });
-
       await contactPage.submit();
 
       await contactPage.isSuccessPopUpVisible(false);
-      await contactPage.hasFocus('company');
+      await contactPage.hasFormFieldFocus('company');
     });
 
     test('message cannot be empty', async ({ contactPage }) => {
       await contactPage.openContactForm();
-
       await contactPage.fillForm({
         firstName: faker.person.firstName(),
         lastName: faker.person.lastName(),
         email: faker.internet.email(),
         company: faker.company.name(),
       });
-
       await contactPage.submit();
 
       await contactPage.isSuccessPopUpVisible(false);
-      await contactPage.hasFocus('message');
+      await contactPage.hasFormFieldFocus('message');
     });
   });
 
@@ -261,13 +214,11 @@ test.describe('Contact form', () => {
 
     test('can be unchecked', async ({ contactPage }) => {
       await contactPage.openContactForm();
-
       await contactPage.uncheckElement('platform');
       await contactPage.uncheckElement('routeOptimization');
 
       await contactPage.isChecked('platform', false);
       await contactPage.isChecked('routeOptimization', false);
-
       // Checked in default
       await contactPage.isChecked('loadPlanning');
       await contactPage.isChecked('mealPlanning');
@@ -299,7 +250,6 @@ test.describe('Contact form', () => {
 
     test('can be unchecked', async ({ contactPage }) => {
       await contactPage.openContactForm();
-
       await contactPage.uncheckElement('communication');
 
       await contactPage.isChecked('communication', false);
@@ -307,7 +257,6 @@ test.describe('Contact form', () => {
 
     test('can be unchecked and checked again', async ({ contactPage }) => {
       await contactPage.openContactForm();
-
       await contactPage.uncheckElement('communication');
 
       await contactPage.isChecked('communication', false);
