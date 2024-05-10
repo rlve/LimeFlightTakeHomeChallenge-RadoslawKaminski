@@ -101,7 +101,6 @@ test.describe('Contact form', () => {
       await contactPage.isSuccessPopUpVisible();
     });
 
-    // TODO: Confirm requirements
     test.fail(
       'clears the form after succesfull submission',
       async ({ contactPage }) => {
