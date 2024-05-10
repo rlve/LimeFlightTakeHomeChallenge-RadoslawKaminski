@@ -1,3 +1,4 @@
+import { faker } from '@faker-js/faker';
 import { type Page, type Locator, expect } from '@playwright/test';
 
 type FormFields = 'firstName' | 'lastName' | 'email' | 'company' | 'message';
@@ -12,24 +13,24 @@ type Checkboxes =
   | 'communication';
 
 export class BaseFormPage {
-  private readonly firstNameInput: Locator;
-  private readonly lastNameInput: Locator;
-  private readonly emailInput: Locator;
-  private readonly companyInput: Locator;
-  private readonly messageInput: Locator;
-  private readonly platformModule: Locator;
-  private readonly loadPlanningModule: Locator;
-  private readonly mealPlanningModule: Locator;
-  private readonly mobileAppModule: Locator;
-  private readonly inventoryManagementModule: Locator;
-  private readonly routeOptimizationModule: Locator;
-  private readonly communicationCheckbox: Locator;
-  private readonly getStartedSubmitButton: Locator;
+  protected firstNameInput: Locator;
+  protected lastNameInput: Locator;
+  protected emailInput: Locator;
+  protected companyInput: Locator;
+  protected messageInput: Locator;
+  protected platformModule: Locator;
+  protected loadPlanningModule: Locator;
+  protected mealPlanningModule: Locator;
+  protected mobileAppModule: Locator;
+  protected inventoryManagementModule: Locator;
+  protected routeOptimizationModule: Locator;
+  protected communicationCheckbox: Locator;
+  protected submitButton: Locator;
   private readonly successPopUp: Locator;
   private readonly successPopUpCloseButton: Locator;
 
-  private formFieldsLocatorsMap: { [key in FormFields]: Locator };
-  private checkboxesLocatorsMap: { [key in Checkboxes]: Locator };
+  protected formFieldsLocatorsMap: { [key in FormFields]: Locator };
+  protected checkboxesLocatorsMap: { [key in Checkboxes]: Locator };
 
   constructor(public readonly page: Page) {
     this.firstNameInput = page.getByPlaceholder('First Name');
@@ -62,7 +63,7 @@ export class BaseFormPage {
       .filter({ hasText: 'RouteOptimization' })
       .locator('div');
     this.communicationCheckbox = page.getByLabel('I agree to receive other');
-    this.getStartedSubmitButton = page
+    this.submitButton = page
       .locator('form')
       .filter({ hasText: 'Get Started with LimeFlight!' })
       .getByRole('button');
@@ -101,7 +102,7 @@ export class BaseFormPage {
   }
 
   async submit() {
-    await this.getStartedSubmitButton.click();
+    await this.submitButton.click();
   }
 
   async isSuccessPopUpVisible(visible = true) {
@@ -114,19 +115,31 @@ export class BaseFormPage {
 
   // Form fields
 
-  async fillForm(data: { [key in FormFields]?: string }) {
-    if (data.firstName) await this.firstNameInput.fill(data.firstName);
-    if (data.lastName) await this.lastNameInput.fill(data.lastName);
-    if (data.email) await this.emailInput.fill(data.email);
-    if (data.company) await this.companyInput.fill(data.company);
-    if (data.message) await this.messageInput.fill(data.message);
+  async fillFormDefaultValues() {
+    await this.fillForm({
+      firstName: faker.person.firstName(),
+      lastName: faker.person.lastName(),
+      email: faker.internet.email(),
+      company: faker.company.name(),
+      message: faker.lorem.paragraph(),
+    });
   }
 
-  async hasFocus(element: FormFields) {
+  async fillForm(data: { [key in FormFields]?: string }) {
+    if (data.firstName !== undefined)
+      await this.firstNameInput.fill(data.firstName);
+    if (data.lastName !== undefined)
+      await this.lastNameInput.fill(data.lastName);
+    if (data.email !== undefined) await this.emailInput.fill(data.email);
+    if (data.company !== undefined) await this.companyInput.fill(data.company);
+    if (data.message !== undefined) await this.messageInput.fill(data.message);
+  }
+
+  async hasFormFieldFocus(element: FormFields) {
     await expect(this.formFieldsLocatorsMap[element]).toBeFocused();
   }
 
-  async hasValue(element: FormFields, value: string) {
+  async hasFormFieldValue(element: FormFields, value: string) {
     await expect(this.formFieldsLocatorsMap[element]).toHaveValue(value);
   }
 
