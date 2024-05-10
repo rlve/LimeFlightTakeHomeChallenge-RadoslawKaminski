@@ -1,5 +1,5 @@
 import { faker } from '@faker-js/faker';
-import { type Page, type Locator, expect } from '@playwright/test';
+import { type Page, type Locator, expect, Request } from '@playwright/test';
 import { BaseFormPage } from './base-form.page';
 
 type PriceFactors = 'aircraftsNumber' | 'oneWayPerYear' | 'guestsNumberPerYear';
@@ -119,5 +119,21 @@ export class PricingPage extends BaseFormPage {
 
   async hasPriceFactorValue(element: PriceFactors, value: string) {
     await expect(this.priceFactorsLocatorsMap[element]).toHaveValue(value);
+  }
+
+  // API
+
+  async arePriceFactorsInRequest(
+    request: Request,
+    name: PriceFactors,
+    value: number,
+  ) {
+    const map: { [key in PriceFactors]: string } = {
+      aircraftsNumber: '0-2/number_of_aircrafts',
+      oneWayPerYear: '0-2/number_of_one_way_flights_per_year',
+      guestsNumberPerYear: '0-2/number_of_guests_per_year',
+    };
+
+    this.areFieldsInRequest(request, map[name], value.toString());
   }
 }

@@ -1,16 +1,17 @@
 import { faker } from '@faker-js/faker';
-import { type Page, type Locator, expect } from '@playwright/test';
+import { type Page, type Locator, expect, Request } from '@playwright/test';
 
 type FormFields = 'firstName' | 'lastName' | 'email' | 'company' | 'message';
 
-type Checkboxes =
+type Modules =
   | 'platform'
   | 'loadPlanning'
   | 'mealPlanning'
   | 'mobileApp'
   | 'inventoryManagement'
-  | 'routeOptimization'
-  | 'communication';
+  | 'routeOptimization';
+
+type Checkboxes = Modules | 'communication';
 
 export class BaseFormPage {
   protected firstNameInput: Locator;
@@ -173,5 +174,28 @@ export class BaseFormPage {
     for (const element of Object.values(modulesMap)) {
       await expect(element).toBeChecked({ checked });
     }
+  }
+
+  // API
+
+  async getRequestPromise() {
+    return this.page.waitForRequest((request) => request.method() === 'POST');
+  }
+
+  async areFieldsInRequest(request: Request, name: string, value: string) {
+    expect(request.postDataJSON()?.fields).toContainEqual({ name, value });
+  }
+
+  async areModulesInRequest(request: Request, module: Modules) {
+    const map: { [key in Modules]: string } = {
+      platform: 'Platform',
+      loadPlanning: 'LoadPlanning',
+      mealPlanning: 'MealPlanning',
+      mobileApp: 'MobileApp',
+      inventoryManagement: 'InventoryManagement',
+      routeOptimization: 'RouteOptimization',
+    };
+
+    this.areFieldsInRequest(request, 'modules_of_interest', map[module]);
   }
 }
