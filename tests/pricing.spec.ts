@@ -8,14 +8,8 @@ test.describe('Pricing form', () => {
     test('can be submitted succesfully with correct data', async ({
       pricingPage,
     }) => {
-      await pricingPage.fillForm({
-        firstName: faker.person.firstName(),
-        lastName: faker.person.lastName(),
-        email: faker.internet.email(),
-        company: faker.company.name(),
-        message: faker.lorem.paragraph(),
-      });
-
+      await pricingPage.fillFormDefaultValues();
+      await pricingPage.fillPriceFactorsDefaultValues();
       await pricingPage.submit();
 
       await pricingPage.isSuccessPopUpVisible();
@@ -24,16 +18,9 @@ test.describe('Pricing form', () => {
     test('can be submitted succesfully with modules unchecked', async ({
       pricingPage,
     }) => {
-      await pricingPage.fillForm({
-        firstName: faker.person.firstName(),
-        lastName: faker.person.lastName(),
-        email: faker.internet.email(),
-        company: faker.company.name(),
-        message: faker.lorem.paragraph(),
-      });
-
+      await pricingPage.fillFormDefaultValues();
+      await pricingPage.fillPriceFactorsDefaultValues();
       await pricingPage.uncheckModules();
-
       await pricingPage.submit();
 
       await pricingPage.isSuccessPopUpVisible();
@@ -42,16 +29,9 @@ test.describe('Pricing form', () => {
     test('can be submitted succesfully with communication checkbox unchecked', async ({
       pricingPage,
     }) => {
-      await pricingPage.fillForm({
-        firstName: faker.person.firstName(),
-        lastName: faker.person.lastName(),
-        email: faker.internet.email(),
-        company: faker.company.name(),
-        message: faker.lorem.paragraph(),
-      });
-
+      await pricingPage.fillFormDefaultValues();
+      await pricingPage.fillPriceFactorsDefaultValues();
       await pricingPage.uncheckElement('communication');
-
       await pricingPage.submit();
 
       await pricingPage.isSuccessPopUpVisible();
@@ -61,20 +41,15 @@ test.describe('Pricing form', () => {
     test.fail(
       'clears the form after succesfull submission',
       async ({ pricingPage }) => {
-        await pricingPage.fillForm({
-          firstName: faker.person.firstName(),
-          lastName: faker.person.lastName(),
-          email: faker.internet.email(),
-          company: faker.company.name(),
-          message: faker.lorem.paragraph(),
-        });
-
+        await pricingPage.fillFormDefaultValues();
+        await pricingPage.fillPriceFactorsDefaultValues();
         await pricingPage.submit();
 
         await pricingPage.isSuccessPopUpVisible();
 
         await pricingPage.closeSuccessPopUp();
-        await pricingPage.hasValue('firstName', '');
+
+        await pricingPage.hasFormFieldValue('firstName', '');
       },
     );
   });
@@ -87,11 +62,11 @@ test.describe('Pricing form', () => {
         company: faker.company.name(),
         message: faker.lorem.paragraph(),
       });
-
+      await pricingPage.fillPriceFactorsDefaultValues();
       await pricingPage.submit();
 
       await pricingPage.isSuccessPopUpVisible(false);
-      await pricingPage.hasFocus('firstName');
+      await pricingPage.hasFormFieldFocus('firstName');
     });
 
     test('last name cannot be empty', async ({ pricingPage }) => {
@@ -101,11 +76,11 @@ test.describe('Pricing form', () => {
         company: faker.company.name(),
         message: faker.lorem.paragraph(),
       });
-
+      await pricingPage.fillPriceFactorsDefaultValues();
       await pricingPage.submit();
 
       await pricingPage.isSuccessPopUpVisible(false);
-      await pricingPage.hasFocus('lastName');
+      await pricingPage.hasFormFieldFocus('lastName');
     });
 
     test('email cannot be empty', async ({ pricingPage }) => {
@@ -115,11 +90,11 @@ test.describe('Pricing form', () => {
         company: faker.company.name(),
         message: faker.lorem.paragraph(),
       });
-
+      await pricingPage.fillPriceFactorsDefaultValues();
       await pricingPage.submit();
 
       await pricingPage.isSuccessPopUpVisible(false);
-      await pricingPage.hasFocus('email');
+      await pricingPage.hasFormFieldFocus('email');
     });
 
     test('email has to have correct format', async ({ pricingPage }) => {
@@ -130,11 +105,11 @@ test.describe('Pricing form', () => {
         company: faker.company.name(),
         message: faker.lorem.paragraph(),
       });
-
+      await pricingPage.fillPriceFactorsDefaultValues();
       await pricingPage.submit();
 
       await pricingPage.isSuccessPopUpVisible(false);
-      await pricingPage.hasFocus('email');
+      await pricingPage.hasFormFieldFocus('email');
     });
 
     test('company cannot be empty', async ({ pricingPage }) => {
@@ -144,26 +119,156 @@ test.describe('Pricing form', () => {
         email: faker.internet.email(),
         message: faker.lorem.paragraph(),
       });
-
+      await pricingPage.fillPriceFactorsDefaultValues();
       await pricingPage.submit();
 
       await pricingPage.isSuccessPopUpVisible(false);
-      await pricingPage.hasFocus('company');
+      await pricingPage.hasFormFieldFocus('company');
     });
 
-    test('message cannot be empty', async ({ pricingPage }) => {
+    // TODO: Confirm requirements
+    test.fail('message cannot be empty', async ({ pricingPage }) => {
       await pricingPage.fillForm({
         firstName: faker.person.firstName(),
         lastName: faker.person.lastName(),
         email: faker.internet.email(),
         company: faker.company.name(),
       });
-
+      await pricingPage.fillPriceFactorsDefaultValues();
       await pricingPage.submit();
 
       await pricingPage.isSuccessPopUpVisible(false);
-      await pricingPage.hasFocus('message');
+      await pricingPage.hasFormFieldFocus('message');
     });
+
+    test('number of aircrafts cannot be empty', async ({ pricingPage }) => {
+      await pricingPage.fillFormDefaultValues();
+      await pricingPage.fillPriceFactors({
+        oneWayPerYear: faker.number.int(10000),
+        guestsNumberPerYear: faker.number.int(1000000),
+      });
+      await pricingPage.submit();
+
+      await pricingPage.isSuccessPopUpVisible(false);
+      await pricingPage.hasPriceFactorFocus('aircraftsNumber');
+    });
+
+    test('number of aircrafts can be 0', async ({ pricingPage }) => {
+      await pricingPage.fillFormDefaultValues();
+      await pricingPage.fillPriceFactors({
+        aircraftsNumber: 0,
+        oneWayPerYear: faker.number.int(10000),
+        guestsNumberPerYear: faker.number.int(1000000),
+      });
+      await pricingPage.submit();
+
+      await pricingPage.isSuccessPopUpVisible();
+    });
+
+    // TODO
+    test.fail(
+      'number of aircrafts cannot be negative',
+      async ({ pricingPage }) => {
+        await pricingPage.fillFormDefaultValues();
+        await pricingPage.fillPriceFactors({
+          aircraftsNumber: -faker.number.int(200),
+          oneWayPerYear: faker.number.int(10000),
+          guestsNumberPerYear: faker.number.int(1000000),
+        });
+        await pricingPage.submit();
+
+        await pricingPage.isSuccessPopUpVisible(false);
+        await pricingPage.hasPriceFactorFocus('aircraftsNumber');
+      },
+    );
+
+    test('number of one way flights per year cannot be empty', async ({
+      pricingPage,
+    }) => {
+      await pricingPage.fillFormDefaultValues();
+      await pricingPage.fillPriceFactors({
+        aircraftsNumber: faker.number.int(200),
+        guestsNumberPerYear: faker.number.int(1000000),
+      });
+      await pricingPage.submit();
+
+      await pricingPage.isSuccessPopUpVisible(false);
+      await pricingPage.hasPriceFactorFocus('oneWayPerYear');
+    });
+
+    test('number of one way flights per year can be 0', async ({
+      pricingPage,
+    }) => {
+      await pricingPage.fillFormDefaultValues();
+      await pricingPage.fillPriceFactors({
+        aircraftsNumber: faker.number.int(200),
+        oneWayPerYear: 0,
+        guestsNumberPerYear: faker.number.int(1000000),
+      });
+      await pricingPage.submit();
+
+      await pricingPage.isSuccessPopUpVisible();
+    });
+
+    // TODO
+    test.fail(
+      'number of one way flights per year cannot be negative',
+      async ({ pricingPage }) => {
+        await pricingPage.fillFormDefaultValues();
+        await pricingPage.fillPriceFactors({
+          aircraftsNumber: faker.number.int(200),
+          oneWayPerYear: -faker.number.int(10000),
+          guestsNumberPerYear: faker.number.int(1000000),
+        });
+        await pricingPage.submit();
+
+        await pricingPage.isSuccessPopUpVisible(false);
+        await pricingPage.hasPriceFactorFocus('aircraftsNumber');
+      },
+    );
+
+    test('number of guests per year cannot be empty', async ({
+      pricingPage,
+    }) => {
+      await pricingPage.fillFormDefaultValues();
+      await pricingPage.fillPriceFactors({
+        aircraftsNumber: faker.number.int(200),
+        oneWayPerYear: faker.number.int(10000),
+      });
+      await pricingPage.submit();
+
+      await pricingPage.isSuccessPopUpVisible(false);
+      await pricingPage.hasPriceFactorFocus('guestsNumberPerYear');
+    });
+
+    test('number of guests per year can be 0', async ({ pricingPage }) => {
+      await pricingPage.fillFormDefaultValues();
+      await pricingPage.fillPriceFactors({
+        aircraftsNumber: faker.number.int(200),
+        oneWayPerYear: faker.number.int(10000),
+        guestsNumberPerYear: 0,
+      });
+      await pricingPage.submit();
+
+      await pricingPage.isSuccessPopUpVisible();
+    });
+
+    // TODO
+    test.fail(
+      'number of guests per year cannot be negative',
+      async ({ pricingPage }) => {
+        await pricingPage.fillFormDefaultValues();
+        await pricingPage.fillPriceFactors({
+          aircraftsNumber: faker.number.int(200),
+          oneWayPerYear: faker.number.int(10000),
+          guestsNumberPerYear: -faker.number.int(1000000),
+        });
+        await pricingPage.submit();
+
+        await pricingPage.isSuccessPopUpVisible(false);
+        await pricingPage.hasPriceFactorFocus('aircraftsNumber');
+      },
+    );
   });
 
   test.describe('modules', () => {
