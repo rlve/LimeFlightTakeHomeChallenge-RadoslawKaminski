@@ -71,3 +71,34 @@ The pricing form erroneously accepts negative values for the Price Factors field
 
 **Actual Result**:
 The form accepts the negative value for 'Price Factors' and attempts to submit, leading to an erroneous state without proper focus on the 'Price Factors' field.
+
+## 4. Fields Missing and Data Mismatch in POST Request
+
+**Module**: Pricing Form
+
+**Test Environment**: `https://test.limeflight.com/`
+
+**Description**:
+Upon successful submission of the pricing form, the POST request generated is missing the 'message' field and incorrectly swaps the data for 'number of one way flights per year' with 'number of guests per year'.
+
+**Steps to Reproduce**:
+
+1. Navigate to the pricing form.
+2. Fill in all fields with valid data, including personal details and price factors.
+3. Submit the form.
+4. Inspect the data payload of the POST request sent upon form submission.
+
+**Expected Result**:
+The POST request should accurately reflect all user inputs:
+
+- `firstName` matches entered first name.
+- `lastName` matches entered last name.
+- `email` matches entered email.
+- `company` matches entered company name.
+- `message` includes the user-entered message.
+- All modules and price factors should be correctly represented and matched with their respective values.
+
+**Actual Result**:
+
+- The `message` field is missing entirely from the POST request.
+- The values for `oneWayPerYear` and `guestsNumberPerYear` are swapped, leading to incorrect data submission.

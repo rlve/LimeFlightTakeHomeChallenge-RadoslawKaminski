@@ -51,6 +51,47 @@ test.describe('Pricing form', () => {
         await pricingPage.hasFormFieldValue('firstName', '');
       },
     );
+
+    test.fail(
+      'POST request with fields is send when submitted succesfully',
+      async ({ pricingPage }) => {
+        const fields = {
+          firstName: faker.person.firstName(),
+          lastName: faker.person.lastName(),
+          email: faker.internet.email(),
+          company: faker.company.name(),
+          message: faker.lorem.paragraph(),
+        };
+        await pricingPage.fillForm(fields);
+
+        const priceFactors = {
+          aircraftsNumber: faker.number.int(200),
+          oneWayPerYear: faker.number.int(10000),
+          guestsNumberPerYear: faker.number.int(1000000),
+        };
+        await pricingPage.fillPriceFactors(priceFactors);
+
+        const requestPromise = pricingPage.getRequestPromise();
+        await pricingPage.submit();
+        const request = await requestPromise;
+
+        pricingPage.areFieldsInRequest(request, 'firstname', fields.firstName);
+        pricingPage.areFieldsInRequest(request, 'lastname', fields.lastName);
+        pricingPage.areFieldsInRequest(request, 'email', fields.email);
+        pricingPage.areFieldsInRequest(request, 'company', fields.company);
+        pricingPage.areFieldsInRequest(request, 'message', fields.message); // fail: missing message
+        pricingPage.areModulesInRequest(request, 'platform');
+        pricingPage.areModulesInRequest(request, 'loadPlanning');
+        pricingPage.areModulesInRequest(request, 'mealPlanning');
+        pricingPage.areModulesInRequest(request, 'mobileApp');
+        pricingPage.areModulesInRequest(request, 'inventoryManagement');
+        pricingPage.areModulesInRequest(request, 'routeOptimization');
+        pricingPage.arePriceFactorsInRequest(request, 'aircraftsNumber', priceFactors.aircraftsNumber); // prettier-ignore
+        // fail: number of one way flight is swapped with number of guests
+        pricingPage.arePriceFactorsInRequest(request, 'oneWayPerYear', priceFactors.oneWayPerYear); // prettier-ignore
+        pricingPage.arePriceFactorsInRequest(request, 'guestsNumberPerYear', priceFactors.guestsNumberPerYear); // prettier-ignore
+      },
+    );
   });
 
   test.describe('validation', () => {

@@ -115,6 +115,37 @@ test.describe('Contact form', () => {
         await contactPage.hasFormFieldValue('firstName', '');
       },
     );
+
+    test('POST request with fields is send when submitted succesfully', async ({
+      contactPage,
+    }) => {
+      await contactPage.openContactForm();
+      const data = {
+        firstName: faker.person.firstName(),
+        lastName: faker.person.lastName(),
+        email: faker.internet.email(),
+        company: faker.company.name(),
+        message: faker.lorem.paragraph(),
+      };
+      await contactPage.fillForm(data);
+
+      const requestPromise = contactPage.getRequestPromise();
+      await contactPage.submit();
+      const request = await requestPromise;
+
+      console.log(request.postDataJSON());
+      contactPage.areFieldsInRequest(request, 'firstname', data.firstName);
+      contactPage.areFieldsInRequest(request, 'lastname', data.lastName);
+      contactPage.areFieldsInRequest(request, 'email', data.email);
+      contactPage.areFieldsInRequest(request, 'company', data.company);
+      contactPage.areFieldsInRequest(request, 'message', data.message);
+      contactPage.areModulesInRequest(request, 'platform');
+      contactPage.areModulesInRequest(request, 'loadPlanning');
+      contactPage.areModulesInRequest(request, 'mealPlanning');
+      contactPage.areModulesInRequest(request, 'mobileApp');
+      contactPage.areModulesInRequest(request, 'inventoryManagement');
+      contactPage.areModulesInRequest(request, 'routeOptimization');
+    });
   });
 
   test.describe('validation', () => {
