@@ -17,6 +17,7 @@ export class ContactPage {
   private readonly contactSalesButton: Locator;
   private readonly getStartedEmailInput: Locator;
   private readonly getStartedButton: Locator;
+  private readonly closeContactFormButton: Locator;
   private readonly firstNameInput: Locator;
   private readonly lastNameInput: Locator;
   private readonly emailInput: Locator;
@@ -31,6 +32,7 @@ export class ContactPage {
   private readonly communicationCheckbox: Locator;
   private readonly getStartedSubmitButton: Locator;
   private readonly successPopUp: Locator;
+  private readonly successPopUpCloseButton: Locator;
 
   private contactFormButtonsLocatorsMap: {
     [key in ContactFormButtons]: Locator;
@@ -52,6 +54,7 @@ export class ContactPage {
           'The Future of Inflight LogisticsThe only end to end inflight logistics software',
       })
       .getByRole('button');
+    this.closeContactFormButton = page.getByRole('img', { name: 'Close' });
     this.firstNameInput = page.getByPlaceholder('First Name');
     this.lastNameInput = page.getByPlaceholder('Last Name');
     this.emailInput = page.getByPlaceholder('Email Address', { exact: true });
@@ -87,6 +90,9 @@ export class ContactPage {
       .filter({ hasText: 'Get Started with LimeFlight!' })
       .getByRole('button');
     this.successPopUp = page.getByText("Thanks!We'll be right with");
+    this.successPopUpCloseButton = page
+      .getByRole('img', { name: 'Close' })
+      .nth(1);
 
     this.contactFormButtonsLocatorsMap = {
       contactSales: this.contactSalesButton,
@@ -122,8 +128,16 @@ export class ContactPage {
     await this.contactFormButtonsLocatorsMap[element].click();
   }
 
+  async closeContactForm() {
+    await this.closeContactFormButton.click();
+  }
+
   async isFormOpen() {
     await expect(this.firstNameInput).toBeInViewport();
+  }
+
+  async isFormClosed() {
+    await expect(this.firstNameInput).not.toBeInViewport();
   }
 
   async enterEmailToGetStarted(email: string) {
@@ -136,6 +150,10 @@ export class ContactPage {
 
   async isSuccessPopUpVisible(visible = true) {
     await expect(this.successPopUp).toBeVisible({ visible });
+  }
+
+  async closeSuccessPopUp() {
+    await this.successPopUpCloseButton.click();
   }
 
   // Form fields
@@ -152,8 +170,8 @@ export class ContactPage {
     await expect(this.formFieldsLocatorsMap[element]).toBeFocused();
   }
 
-  async hasValue(element: FormFields, text: string) {
-    await expect(this.formFieldsLocatorsMap[element]).toHaveValue(text);
+  async hasValue(element: FormFields, value: string) {
+    await expect(this.formFieldsLocatorsMap[element]).toHaveValue(value);
   }
 
   // Checkboxes

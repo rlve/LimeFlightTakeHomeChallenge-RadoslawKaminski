@@ -30,6 +30,41 @@ test.describe('Contact form', () => {
       await contactPage.isFormOpen();
       await contactPage.hasValue('email', email);
     });
+
+    test('form can be closed', async ({ contactPage }) => {
+      await contactPage.openContactForm();
+
+      await contactPage.isFormOpen();
+
+      await contactPage.closeContactForm();
+
+      await contactPage.isFormClosed();
+    });
+
+    test('form can be closed and open again and will persist data', async ({
+      contactPage,
+    }) => {
+      await contactPage.openContactForm();
+
+      const data = {
+        firstName: faker.person.firstName(),
+        lastName: faker.person.lastName(),
+        email: faker.internet.email(),
+        company: faker.company.name(),
+        message: faker.lorem.paragraph(),
+      };
+      await contactPage.fillForm(data);
+
+      await contactPage.closeContactForm();
+      await contactPage.openContactForm();
+
+      await contactPage.isFormOpen();
+      await contactPage.hasValue('firstName', data.firstName);
+      await contactPage.hasValue('lastName', data.lastName);
+      await contactPage.hasValue('email', data.email);
+      await contactPage.hasValue('company', data.company);
+      await contactPage.hasValue('message', data.message);
+    });
   });
 
   test.describe('submission', () => {
@@ -91,7 +126,29 @@ test.describe('Contact form', () => {
       await contactPage.isSuccessPopUpVisible();
     });
 
-    // another button
+    // TODO: Confirm requirements
+    test.fail(
+      'clears the form after succesfull submission',
+      async ({ contactPage }) => {
+        await contactPage.openContactForm();
+
+        await contactPage.fillForm({
+          firstName: faker.person.firstName(),
+          lastName: faker.person.lastName(),
+          email: faker.internet.email(),
+          company: faker.company.name(),
+          message: faker.lorem.paragraph(),
+        });
+
+        await contactPage.submit();
+
+        await contactPage.isSuccessPopUpVisible();
+
+        await contactPage.closeSuccessPopUp();
+        await contactPage.openContactForm();
+        await contactPage.hasValue('firstName', '');
+      },
+    );
   });
 
   test.describe('validation', () => {
