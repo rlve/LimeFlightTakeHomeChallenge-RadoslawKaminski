@@ -4,7 +4,7 @@ Take home challenge for [LimeFlight Take Home Challenge QA](https://github.com/y
 
 ## Scope
 
-- **Timebox**: 8 hours
+- **Timebox**: ~~8 hours
 - **Scope**: Testing focused on the Contact and Pricing forms
 - **Type of Tests**: Functional tests (other types of tests have not been considered)
 - **Browsers**: Tested only on Chromium; scenarios have not been tested or adapted for other browsers
