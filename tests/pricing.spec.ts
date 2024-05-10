@@ -37,7 +37,6 @@ test.describe('Pricing form', () => {
       await pricingPage.isSuccessPopUpVisible();
     });
 
-    // TODO: Confirm requirements
     test.fail(
       'clears the form after succesfull submission',
       async ({ pricingPage }) => {
@@ -126,7 +125,6 @@ test.describe('Pricing form', () => {
       await pricingPage.hasFormFieldFocus('company');
     });
 
-    // TODO: Confirm requirements
     test.fail('message cannot be empty', async ({ pricingPage }) => {
       await pricingPage.fillForm({
         firstName: faker.person.firstName(),
@@ -165,7 +163,6 @@ test.describe('Pricing form', () => {
       await pricingPage.isSuccessPopUpVisible();
     });
 
-    // TODO
     test.fail(
       'number of aircrafts cannot be negative',
       async ({ pricingPage }) => {
@@ -210,7 +207,6 @@ test.describe('Pricing form', () => {
       await pricingPage.isSuccessPopUpVisible();
     });
 
-    // TODO
     test.fail(
       'number of one way flights per year cannot be negative',
       async ({ pricingPage }) => {
@@ -253,7 +249,6 @@ test.describe('Pricing form', () => {
       await pricingPage.isSuccessPopUpVisible();
     });
 
-    // TODO
     test.fail(
       'number of guests per year cannot be negative',
       async ({ pricingPage }) => {
