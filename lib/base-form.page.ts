@@ -14,6 +14,7 @@ type Modules =
 type Checkboxes = Modules | 'communication';
 
 export class BaseFormPage {
+  private readonly allowAllCookies: Locator;
   protected firstNameInput: Locator;
   protected lastNameInput: Locator;
   protected emailInput: Locator;
@@ -34,6 +35,9 @@ export class BaseFormPage {
   protected checkboxesLocatorsMap: { [key in Checkboxes]: Locator };
 
   constructor(public readonly page: Page) {
+    this.allowAllCookies = page.getByRole('button', {
+      name: 'Allow all cookies',
+    });
     this.firstNameInput = page.getByPlaceholder('First Name');
     this.lastNameInput = page.getByPlaceholder('Last Name');
     this.emailInput = page.getByPlaceholder('Email Address', { exact: true });
@@ -93,6 +97,14 @@ export class BaseFormPage {
   }
 
   // Actions
+
+  async tryCloseCookiesPopUp() {
+    try {
+      await this.allowAllCookies.click({ timeout: 2000 });
+    } catch (error) {
+      console.log('Cookies Pop Up not visible');
+    }
+  }
 
   async assertFormOpen() {
     await expect(this.firstNameInput).toBeInViewport();
