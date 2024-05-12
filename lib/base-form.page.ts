@@ -14,6 +14,7 @@ type Modules =
 type Checkboxes = Modules | 'communication';
 
 export class BaseFormPage {
+  private readonly allowAllCookies: Locator;
   protected firstNameInput: Locator;
   protected lastNameInput: Locator;
   protected emailInput: Locator;
@@ -34,6 +35,9 @@ export class BaseFormPage {
   protected checkboxesLocatorsMap: { [key in Checkboxes]: Locator };
 
   constructor(public readonly page: Page) {
+    this.allowAllCookies = page.getByRole('button', {
+      name: 'Allow all cookies',
+    });
     this.firstNameInput = page.getByPlaceholder('First Name');
     this.lastNameInput = page.getByPlaceholder('Last Name');
     this.emailInput = page.getByPlaceholder('Email Address', { exact: true });
@@ -94,11 +98,17 @@ export class BaseFormPage {
 
   // Actions
 
-  async isFormOpen() {
+  async tryCloseCookiesPopUp() {
+    try {
+      await this.allowAllCookies.click({ timeout: 2000 });
+    } catch (error) {}
+  }
+
+  async assertFormOpen() {
     await expect(this.firstNameInput).toBeInViewport();
   }
 
-  async isFormClosed() {
+  async assertFormClosed() {
     await expect(this.firstNameInput).not.toBeInViewport();
   }
 
@@ -106,7 +116,7 @@ export class BaseFormPage {
     await this.submitButton.click();
   }
 
-  async isSuccessPopUpVisible(visible = true) {
+  async assertSuccessPopUpVisible(visible = true) {
     await expect(this.successPopUp).toBeVisible({ visible });
   }
 
@@ -136,11 +146,11 @@ export class BaseFormPage {
     if (data.message !== undefined) await this.messageInput.fill(data.message);
   }
 
-  async hasFormFieldFocus(element: FormFields) {
+  async assertFormFieldFocus(element: FormFields) {
     await expect(this.formFieldsLocatorsMap[element]).toBeFocused();
   }
 
-  async hasFormFieldValue(element: FormFields, value: string) {
+  async assertFormFieldValue(element: FormFields, value: string) {
     await expect(this.formFieldsLocatorsMap[element]).toHaveValue(value);
   }
 
@@ -154,7 +164,7 @@ export class BaseFormPage {
     await this.checkboxesLocatorsMap[element].uncheck();
   }
 
-  async isChecked(element: Checkboxes, checked = true) {
+  async assertChecked(element: Checkboxes, checked = true) {
     await expect(this.checkboxesLocatorsMap[element]).toBeChecked({ checked });
   }
 
@@ -168,7 +178,7 @@ export class BaseFormPage {
     }
   }
 
-  async areModulesChecked(checked = true) {
+  async assertModulesChecked(checked = true) {
     const { communication, ...modulesMap } = this.checkboxesLocatorsMap;
 
     for (const element of Object.values(modulesMap)) {
@@ -182,11 +192,11 @@ export class BaseFormPage {
     return this.page.waitForRequest((request) => request.method() === 'POST');
   }
 
-  async areFieldsInRequest(request: Request, name: string, value: string) {
+  async assertFieldsInRequest(request: Request, name: string, value: string) {
     expect(request.postDataJSON()?.fields).toContainEqual({ name, value });
   }
 
-  async areModulesInRequest(request: Request, module: Modules) {
+  async assertModulesInRequest(request: Request, module: Modules) {
     const map: { [key in Modules]: string } = {
       platform: 'Platform',
       loadPlanning: 'LoadPlanning',
@@ -196,6 +206,6 @@ export class BaseFormPage {
       routeOptimization: 'RouteOptimization',
     };
 
-    this.areFieldsInRequest(request, 'modules_of_interest', map[module]);
+    this.assertFieldsInRequest(request, 'modules_of_interest', map[module]);
   }
 }
