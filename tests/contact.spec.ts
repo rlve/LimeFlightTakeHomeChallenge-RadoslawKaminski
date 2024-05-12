@@ -10,7 +10,7 @@ test.describe('Contact form', () => {
     }) => {
       await contactPage.openContactForm('contactSales');
 
-      await contactPage.isFormOpen();
+      await contactPage.assertFormOpen();
     });
 
     test('form can be open using Get Started button', async ({
@@ -18,7 +18,7 @@ test.describe('Contact form', () => {
     }) => {
       await contactPage.openContactForm('getStarted');
 
-      await contactPage.isFormOpen();
+      await contactPage.assertFormOpen();
     });
 
     test('form can be open using Get Started button with email populated', async ({
@@ -28,18 +28,18 @@ test.describe('Contact form', () => {
       await contactPage.enterEmailToGetStarted(email);
       await contactPage.openContactForm('getStarted');
 
-      await contactPage.isFormOpen();
-      await contactPage.hasFormFieldValue('email', email);
+      await contactPage.assertFormOpen();
+      await contactPage.assertFormFieldValue('email', email);
     });
 
     test('form can be closed', async ({ contactPage }) => {
       await contactPage.openContactForm();
 
-      await contactPage.isFormOpen();
+      await contactPage.assertFormOpen();
 
       await contactPage.closeContactForm();
 
-      await contactPage.isFormClosed();
+      await contactPage.assertFormClosed();
     });
 
     test('form can be closed and open again and will persist data', async ({
@@ -59,12 +59,12 @@ test.describe('Contact form', () => {
       await contactPage.closeContactForm();
       await contactPage.openContactForm();
 
-      await contactPage.isFormOpen();
-      await contactPage.hasFormFieldValue('firstName', data.firstName);
-      await contactPage.hasFormFieldValue('lastName', data.lastName);
-      await contactPage.hasFormFieldValue('email', data.email);
-      await contactPage.hasFormFieldValue('company', data.company);
-      await contactPage.hasFormFieldValue('message', data.message);
+      await contactPage.assertFormOpen();
+      await contactPage.assertFormFieldValue('firstName', data.firstName);
+      await contactPage.assertFormFieldValue('lastName', data.lastName);
+      await contactPage.assertFormFieldValue('email', data.email);
+      await contactPage.assertFormFieldValue('company', data.company);
+      await contactPage.assertFormFieldValue('message', data.message);
     });
   });
 
@@ -76,7 +76,7 @@ test.describe('Contact form', () => {
       await contactPage.fillFormDefaultValues();
       await contactPage.submit();
 
-      await contactPage.isSuccessPopUpVisible();
+      await contactPage.assertSuccessPopUpVisible();
     });
 
     test('can be submitted succesfully with modules unchecked', async ({
@@ -87,7 +87,7 @@ test.describe('Contact form', () => {
       await contactPage.uncheckModules();
       await contactPage.submit();
 
-      await contactPage.isSuccessPopUpVisible();
+      await contactPage.assertSuccessPopUpVisible();
     });
 
     test('can be submitted succesfully with communication checkbox unchecked', async ({
@@ -98,7 +98,7 @@ test.describe('Contact form', () => {
       await contactPage.uncheckElement('communication');
       await contactPage.submit();
 
-      await contactPage.isSuccessPopUpVisible();
+      await contactPage.assertSuccessPopUpVisible();
     });
 
     test.fail(
@@ -107,12 +107,12 @@ test.describe('Contact form', () => {
         await contactPage.openContactForm();
         await contactPage.fillFormDefaultValues();
         await contactPage.submit();
-        await contactPage.isSuccessPopUpVisible();
+        await contactPage.assertSuccessPopUpVisible();
 
         await contactPage.closeSuccessPopUp();
         await contactPage.openContactForm();
 
-        await contactPage.hasFormFieldValue('firstName', '');
+        await contactPage.assertFormFieldValue('firstName', '');
       },
     );
 
@@ -133,17 +133,17 @@ test.describe('Contact form', () => {
       await contactPage.submit();
       const request = await requestPromise;
 
-      contactPage.areFieldsInRequest(request, 'firstname', data.firstName);
-      contactPage.areFieldsInRequest(request, 'lastname', data.lastName);
-      contactPage.areFieldsInRequest(request, 'email', data.email);
-      contactPage.areFieldsInRequest(request, 'company', data.company);
-      contactPage.areFieldsInRequest(request, 'message', data.message);
-      contactPage.areModulesInRequest(request, 'platform');
-      contactPage.areModulesInRequest(request, 'loadPlanning');
-      contactPage.areModulesInRequest(request, 'mealPlanning');
-      contactPage.areModulesInRequest(request, 'mobileApp');
-      contactPage.areModulesInRequest(request, 'inventoryManagement');
-      contactPage.areModulesInRequest(request, 'routeOptimization');
+      contactPage.assertFieldsInRequest(request, 'firstname', data.firstName);
+      contactPage.assertFieldsInRequest(request, 'lastname', data.lastName);
+      contactPage.assertFieldsInRequest(request, 'email', data.email);
+      contactPage.assertFieldsInRequest(request, 'company', data.company);
+      contactPage.assertFieldsInRequest(request, 'message', data.message);
+      contactPage.assertModulesInRequest(request, 'platform');
+      contactPage.assertModulesInRequest(request, 'loadPlanning');
+      contactPage.assertModulesInRequest(request, 'mealPlanning');
+      contactPage.assertModulesInRequest(request, 'mobileApp');
+      contactPage.assertModulesInRequest(request, 'inventoryManagement');
+      contactPage.assertModulesInRequest(request, 'routeOptimization');
     });
   });
 
@@ -158,8 +158,8 @@ test.describe('Contact form', () => {
       });
       await contactPage.submit();
 
-      await contactPage.isSuccessPopUpVisible(false);
-      await contactPage.hasFormFieldFocus('firstName');
+      await contactPage.assertSuccessPopUpVisible(false);
+      await contactPage.assertFormFieldFocus('firstName');
     });
 
     test('last name cannot be empty', async ({ contactPage }) => {
@@ -172,8 +172,8 @@ test.describe('Contact form', () => {
       });
       await contactPage.submit();
 
-      await contactPage.isSuccessPopUpVisible(false);
-      await contactPage.hasFormFieldFocus('lastName');
+      await contactPage.assertSuccessPopUpVisible(false);
+      await contactPage.assertFormFieldFocus('lastName');
     });
 
     test('email cannot be empty', async ({ contactPage }) => {
@@ -186,8 +186,8 @@ test.describe('Contact form', () => {
       });
       await contactPage.submit();
 
-      await contactPage.isSuccessPopUpVisible(false);
-      await contactPage.hasFormFieldFocus('email');
+      await contactPage.assertSuccessPopUpVisible(false);
+      await contactPage.assertFormFieldFocus('email');
     });
 
     test('email has to have correct format', async ({ contactPage }) => {
@@ -201,8 +201,8 @@ test.describe('Contact form', () => {
       });
       await contactPage.submit();
 
-      await contactPage.isSuccessPopUpVisible(false);
-      await contactPage.hasFormFieldFocus('email');
+      await contactPage.assertSuccessPopUpVisible(false);
+      await contactPage.assertFormFieldFocus('email');
     });
 
     test('company cannot be empty', async ({ contactPage }) => {
@@ -215,8 +215,8 @@ test.describe('Contact form', () => {
       });
       await contactPage.submit();
 
-      await contactPage.isSuccessPopUpVisible(false);
-      await contactPage.hasFormFieldFocus('company');
+      await contactPage.assertSuccessPopUpVisible(false);
+      await contactPage.assertFormFieldFocus('company');
     });
 
     test('message cannot be empty', async ({ contactPage }) => {
@@ -229,8 +229,8 @@ test.describe('Contact form', () => {
       });
       await contactPage.submit();
 
-      await contactPage.isSuccessPopUpVisible(false);
-      await contactPage.hasFormFieldFocus('message');
+      await contactPage.assertSuccessPopUpVisible(false);
+      await contactPage.assertFormFieldFocus('message');
     });
   });
 
@@ -238,7 +238,7 @@ test.describe('Contact form', () => {
     test('are checked in default', async ({ contactPage }) => {
       await contactPage.openContactForm();
 
-      await contactPage.areModulesChecked();
+      await contactPage.assertModulesChecked();
     });
 
     test('can be unchecked', async ({ contactPage }) => {
@@ -246,11 +246,11 @@ test.describe('Contact form', () => {
       await contactPage.uncheckElement('platform');
       await contactPage.uncheckElement('routeOptimization');
 
-      await contactPage.isChecked('platform', false);
-      await contactPage.isChecked('routeOptimization', false);
+      await contactPage.assertChecked('platform', false);
+      await contactPage.assertChecked('routeOptimization', false);
       // Checked in default
-      await contactPage.isChecked('loadPlanning');
-      await contactPage.isChecked('mealPlanning');
+      await contactPage.assertChecked('loadPlanning');
+      await contactPage.assertChecked('mealPlanning');
     });
 
     test('can be unchecked and checked again', async ({ contactPage }) => {
@@ -259,14 +259,14 @@ test.describe('Contact form', () => {
       await contactPage.uncheckElement('loadPlanning');
       await contactPage.uncheckElement('mealPlanning');
 
-      await contactPage.isChecked('loadPlanning', false);
-      await contactPage.isChecked('mealPlanning', false);
+      await contactPage.assertChecked('loadPlanning', false);
+      await contactPage.assertChecked('mealPlanning', false);
 
       await contactPage.checkElement('loadPlanning');
       await contactPage.checkElement('mealPlanning');
 
-      await contactPage.isChecked('loadPlanning');
-      await contactPage.isChecked('mealPlanning');
+      await contactPage.assertChecked('loadPlanning');
+      await contactPage.assertChecked('mealPlanning');
     });
   });
 
@@ -274,25 +274,25 @@ test.describe('Contact form', () => {
     test('is checked in default', async ({ contactPage }) => {
       await contactPage.openContactForm();
 
-      await contactPage.isChecked('communication');
+      await contactPage.assertChecked('communication');
     });
 
     test('can be unchecked', async ({ contactPage }) => {
       await contactPage.openContactForm();
       await contactPage.uncheckElement('communication');
 
-      await contactPage.isChecked('communication', false);
+      await contactPage.assertChecked('communication', false);
     });
 
     test('can be unchecked and checked again', async ({ contactPage }) => {
       await contactPage.openContactForm();
       await contactPage.uncheckElement('communication');
 
-      await contactPage.isChecked('communication', false);
+      await contactPage.assertChecked('communication', false);
 
       await contactPage.checkElement('communication');
 
-      await contactPage.isChecked('communication');
+      await contactPage.assertChecked('communication');
     });
   });
 });

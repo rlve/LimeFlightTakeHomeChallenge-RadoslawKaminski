@@ -12,7 +12,7 @@ test.describe('Pricing form', () => {
       await pricingPage.fillPriceFactorsDefaultValues();
       await pricingPage.submit();
 
-      await pricingPage.isSuccessPopUpVisible();
+      await pricingPage.assertSuccessPopUpVisible();
     });
 
     test('can be submitted succesfully with modules unchecked', async ({
@@ -23,7 +23,7 @@ test.describe('Pricing form', () => {
       await pricingPage.uncheckModules();
       await pricingPage.submit();
 
-      await pricingPage.isSuccessPopUpVisible();
+      await pricingPage.assertSuccessPopUpVisible();
     });
 
     test('can be submitted succesfully with communication checkbox unchecked', async ({
@@ -34,7 +34,7 @@ test.describe('Pricing form', () => {
       await pricingPage.uncheckElement('communication');
       await pricingPage.submit();
 
-      await pricingPage.isSuccessPopUpVisible();
+      await pricingPage.assertSuccessPopUpVisible();
     });
 
     test.fail(
@@ -44,11 +44,11 @@ test.describe('Pricing form', () => {
         await pricingPage.fillPriceFactorsDefaultValues();
         await pricingPage.submit();
 
-        await pricingPage.isSuccessPopUpVisible();
+        await pricingPage.assertSuccessPopUpVisible();
 
         await pricingPage.closeSuccessPopUp();
 
-        await pricingPage.hasFormFieldValue('firstName', '');
+        await pricingPage.assertFormFieldValue('firstName', '');
       },
     );
 
@@ -75,21 +75,25 @@ test.describe('Pricing form', () => {
         await pricingPage.submit();
         const request = await requestPromise;
 
-        pricingPage.areFieldsInRequest(request, 'firstname', fields.firstName);
-        pricingPage.areFieldsInRequest(request, 'lastname', fields.lastName);
-        pricingPage.areFieldsInRequest(request, 'email', fields.email);
-        pricingPage.areFieldsInRequest(request, 'company', fields.company);
-        pricingPage.areFieldsInRequest(request, 'message', fields.message); // fail: missing message
-        pricingPage.areModulesInRequest(request, 'platform');
-        pricingPage.areModulesInRequest(request, 'loadPlanning');
-        pricingPage.areModulesInRequest(request, 'mealPlanning');
-        pricingPage.areModulesInRequest(request, 'mobileApp');
-        pricingPage.areModulesInRequest(request, 'inventoryManagement');
-        pricingPage.areModulesInRequest(request, 'routeOptimization');
-        pricingPage.arePriceFactorsInRequest(request, 'aircraftsNumber', priceFactors.aircraftsNumber); // prettier-ignore
+        pricingPage.assertFieldsInRequest(
+          request,
+          'firstname',
+          fields.firstName,
+        );
+        pricingPage.assertFieldsInRequest(request, 'lastname', fields.lastName);
+        pricingPage.assertFieldsInRequest(request, 'email', fields.email);
+        pricingPage.assertFieldsInRequest(request, 'company', fields.company);
+        pricingPage.assertFieldsInRequest(request, 'message', fields.message); // fail: missing message
+        pricingPage.assertModulesInRequest(request, 'platform');
+        pricingPage.assertModulesInRequest(request, 'loadPlanning');
+        pricingPage.assertModulesInRequest(request, 'mealPlanning');
+        pricingPage.assertModulesInRequest(request, 'mobileApp');
+        pricingPage.assertModulesInRequest(request, 'inventoryManagement');
+        pricingPage.assertModulesInRequest(request, 'routeOptimization');
+        pricingPage.assertPriceFactorsInRequest(request, 'aircraftsNumber', priceFactors.aircraftsNumber); // prettier-ignore
         // fail: number of one way flight is swapped with number of guests
-        pricingPage.arePriceFactorsInRequest(request, 'oneWayPerYear', priceFactors.oneWayPerYear); // prettier-ignore
-        pricingPage.arePriceFactorsInRequest(request, 'guestsNumberPerYear', priceFactors.guestsNumberPerYear); // prettier-ignore
+        pricingPage.assertPriceFactorsInRequest(request, 'oneWayPerYear', priceFactors.oneWayPerYear); // prettier-ignore
+        pricingPage.assertPriceFactorsInRequest(request, 'guestsNumberPerYear', priceFactors.guestsNumberPerYear); // prettier-ignore
       },
     );
   });
@@ -105,8 +109,8 @@ test.describe('Pricing form', () => {
       await pricingPage.fillPriceFactorsDefaultValues();
       await pricingPage.submit();
 
-      await pricingPage.isSuccessPopUpVisible(false);
-      await pricingPage.hasFormFieldFocus('firstName');
+      await pricingPage.assertSuccessPopUpVisible(false);
+      await pricingPage.assertFormFieldFocus('firstName');
     });
 
     test('last name cannot be empty', async ({ pricingPage }) => {
@@ -119,8 +123,8 @@ test.describe('Pricing form', () => {
       await pricingPage.fillPriceFactorsDefaultValues();
       await pricingPage.submit();
 
-      await pricingPage.isSuccessPopUpVisible(false);
-      await pricingPage.hasFormFieldFocus('lastName');
+      await pricingPage.assertSuccessPopUpVisible(false);
+      await pricingPage.assertFormFieldFocus('lastName');
     });
 
     test('email cannot be empty', async ({ pricingPage }) => {
@@ -133,8 +137,8 @@ test.describe('Pricing form', () => {
       await pricingPage.fillPriceFactorsDefaultValues();
       await pricingPage.submit();
 
-      await pricingPage.isSuccessPopUpVisible(false);
-      await pricingPage.hasFormFieldFocus('email');
+      await pricingPage.assertSuccessPopUpVisible(false);
+      await pricingPage.assertFormFieldFocus('email');
     });
 
     test('email has to have correct format', async ({ pricingPage }) => {
@@ -148,8 +152,8 @@ test.describe('Pricing form', () => {
       await pricingPage.fillPriceFactorsDefaultValues();
       await pricingPage.submit();
 
-      await pricingPage.isSuccessPopUpVisible(false);
-      await pricingPage.hasFormFieldFocus('email');
+      await pricingPage.assertSuccessPopUpVisible(false);
+      await pricingPage.assertFormFieldFocus('email');
     });
 
     test('company cannot be empty', async ({ pricingPage }) => {
@@ -162,8 +166,8 @@ test.describe('Pricing form', () => {
       await pricingPage.fillPriceFactorsDefaultValues();
       await pricingPage.submit();
 
-      await pricingPage.isSuccessPopUpVisible(false);
-      await pricingPage.hasFormFieldFocus('company');
+      await pricingPage.assertSuccessPopUpVisible(false);
+      await pricingPage.assertFormFieldFocus('company');
     });
 
     test.fail('message cannot be empty', async ({ pricingPage }) => {
@@ -176,8 +180,8 @@ test.describe('Pricing form', () => {
       await pricingPage.fillPriceFactorsDefaultValues();
       await pricingPage.submit();
 
-      await pricingPage.isSuccessPopUpVisible(false);
-      await pricingPage.hasFormFieldFocus('message');
+      await pricingPage.assertSuccessPopUpVisible(false);
+      await pricingPage.assertFormFieldFocus('message');
     });
 
     test('number of aircrafts cannot be empty', async ({ pricingPage }) => {
@@ -188,8 +192,8 @@ test.describe('Pricing form', () => {
       });
       await pricingPage.submit();
 
-      await pricingPage.isSuccessPopUpVisible(false);
-      await pricingPage.hasPriceFactorFocus('aircraftsNumber');
+      await pricingPage.assertSuccessPopUpVisible(false);
+      await pricingPage.assertPriceFactorFocus('aircraftsNumber');
     });
 
     test('number of aircrafts can be 0', async ({ pricingPage }) => {
@@ -201,7 +205,7 @@ test.describe('Pricing form', () => {
       });
       await pricingPage.submit();
 
-      await pricingPage.isSuccessPopUpVisible();
+      await pricingPage.assertSuccessPopUpVisible();
     });
 
     test.fail(
@@ -215,8 +219,8 @@ test.describe('Pricing form', () => {
         });
         await pricingPage.submit();
 
-        await pricingPage.isSuccessPopUpVisible(false);
-        await pricingPage.hasPriceFactorFocus('aircraftsNumber');
+        await pricingPage.assertSuccessPopUpVisible(false);
+        await pricingPage.assertPriceFactorFocus('aircraftsNumber');
       },
     );
 
@@ -230,8 +234,8 @@ test.describe('Pricing form', () => {
       });
       await pricingPage.submit();
 
-      await pricingPage.isSuccessPopUpVisible(false);
-      await pricingPage.hasPriceFactorFocus('oneWayPerYear');
+      await pricingPage.assertSuccessPopUpVisible(false);
+      await pricingPage.assertPriceFactorFocus('oneWayPerYear');
     });
 
     test('number of one way flights per year can be 0', async ({
@@ -245,7 +249,7 @@ test.describe('Pricing form', () => {
       });
       await pricingPage.submit();
 
-      await pricingPage.isSuccessPopUpVisible();
+      await pricingPage.assertSuccessPopUpVisible();
     });
 
     test.fail(
@@ -259,8 +263,8 @@ test.describe('Pricing form', () => {
         });
         await pricingPage.submit();
 
-        await pricingPage.isSuccessPopUpVisible(false);
-        await pricingPage.hasPriceFactorFocus('aircraftsNumber');
+        await pricingPage.assertSuccessPopUpVisible(false);
+        await pricingPage.assertPriceFactorFocus('aircraftsNumber');
       },
     );
 
@@ -274,8 +278,8 @@ test.describe('Pricing form', () => {
       });
       await pricingPage.submit();
 
-      await pricingPage.isSuccessPopUpVisible(false);
-      await pricingPage.hasPriceFactorFocus('guestsNumberPerYear');
+      await pricingPage.assertSuccessPopUpVisible(false);
+      await pricingPage.assertPriceFactorFocus('guestsNumberPerYear');
     });
 
     test('number of guests per year can be 0', async ({ pricingPage }) => {
@@ -287,7 +291,7 @@ test.describe('Pricing form', () => {
       });
       await pricingPage.submit();
 
-      await pricingPage.isSuccessPopUpVisible();
+      await pricingPage.assertSuccessPopUpVisible();
     });
 
     test.fail(
@@ -301,63 +305,63 @@ test.describe('Pricing form', () => {
         });
         await pricingPage.submit();
 
-        await pricingPage.isSuccessPopUpVisible(false);
-        await pricingPage.hasPriceFactorFocus('aircraftsNumber');
+        await pricingPage.assertSuccessPopUpVisible(false);
+        await pricingPage.assertPriceFactorFocus('aircraftsNumber');
       },
     );
   });
 
   test.describe('modules', () => {
     test('are checked in default', async ({ pricingPage }) => {
-      await pricingPage.areModulesChecked();
+      await pricingPage.assertModulesChecked();
     });
 
     test('can be unchecked', async ({ pricingPage }) => {
       await pricingPage.uncheckElement('platform');
       await pricingPage.uncheckElement('routeOptimization');
 
-      await pricingPage.isChecked('platform', false);
-      await pricingPage.isChecked('routeOptimization', false);
+      await pricingPage.assertChecked('platform', false);
+      await pricingPage.assertChecked('routeOptimization', false);
 
       // Checked in default
-      await pricingPage.isChecked('loadPlanning');
-      await pricingPage.isChecked('mealPlanning');
+      await pricingPage.assertChecked('loadPlanning');
+      await pricingPage.assertChecked('mealPlanning');
     });
 
     test('can be unchecked and checked again', async ({ pricingPage }) => {
       await pricingPage.uncheckElement('loadPlanning');
       await pricingPage.uncheckElement('mealPlanning');
 
-      await pricingPage.isChecked('loadPlanning', false);
-      await pricingPage.isChecked('mealPlanning', false);
+      await pricingPage.assertChecked('loadPlanning', false);
+      await pricingPage.assertChecked('mealPlanning', false);
 
       await pricingPage.checkElement('loadPlanning');
       await pricingPage.checkElement('mealPlanning');
 
-      await pricingPage.isChecked('loadPlanning');
-      await pricingPage.isChecked('mealPlanning');
+      await pricingPage.assertChecked('loadPlanning');
+      await pricingPage.assertChecked('mealPlanning');
     });
   });
 
   test.describe('communication checkbox', () => {
     test('is checked in default', async ({ pricingPage }) => {
-      await pricingPage.isChecked('communication');
+      await pricingPage.assertChecked('communication');
     });
 
     test('can be unchecked', async ({ pricingPage }) => {
       await pricingPage.uncheckElement('communication');
 
-      await pricingPage.isChecked('communication', false);
+      await pricingPage.assertChecked('communication', false);
     });
 
     test('can be unchecked and checked again', async ({ pricingPage }) => {
       await pricingPage.uncheckElement('communication');
 
-      await pricingPage.isChecked('communication', false);
+      await pricingPage.assertChecked('communication', false);
 
       await pricingPage.checkElement('communication');
 
-      await pricingPage.isChecked('communication');
+      await pricingPage.assertChecked('communication');
     });
   });
 });

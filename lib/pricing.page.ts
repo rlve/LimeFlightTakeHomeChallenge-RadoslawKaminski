@@ -113,17 +113,17 @@ export class PricingPage extends BaseFormPage {
     }
   }
 
-  async hasPriceFactorFocus(element: PriceFactors) {
+  async assertPriceFactorFocus(element: PriceFactors) {
     await expect(this.priceFactorsLocatorsMap[element]).toBeFocused();
   }
 
-  async hasPriceFactorValue(element: PriceFactors, value: string) {
+  async assertPriceFactorValue(element: PriceFactors, value: string) {
     await expect(this.priceFactorsLocatorsMap[element]).toHaveValue(value);
   }
 
   // API
 
-  async arePriceFactorsInRequest(
+  async assertPriceFactorsInRequest(
     request: Request,
     name: PriceFactors,
     value: number,
@@ -134,6 +134,6 @@ export class PricingPage extends BaseFormPage {
       guestsNumberPerYear: '0-2/number_of_guests_per_year',
     };
 
-    this.areFieldsInRequest(request, map[name], value.toString());
+    this.assertFieldsInRequest(request, map[name], value.toString());
   }
 }
