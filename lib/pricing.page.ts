@@ -48,7 +48,7 @@ export class PricingPage extends BaseFormPage {
       .locator('section')
       .filter({ hasText: 'Pricing built for airlines of' })
       .getByPlaceholder('Message');
-    this.platformModule = page.getByText('Platform').nth(4);
+    this.platformModule = page.getByText('Platform').nth(3);
     this.loadPlanningModule = page.getByText('LoadPlanning').nth(2);
     this.mealPlanningModule = page.getByText('MealPlanning').nth(2);
     this.mobileAppModule = page.getByText('MobileApp').nth(2);

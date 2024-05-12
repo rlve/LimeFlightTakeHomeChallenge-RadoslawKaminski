@@ -101,9 +101,7 @@ export class BaseFormPage {
   async tryCloseCookiesPopUp() {
     try {
       await this.allowAllCookies.click({ timeout: 2000 });
-    } catch (error) {
-      console.log('Cookies Pop Up not visible');
-    }
+    } catch (error) {}
   }
 
   async assertFormOpen() {
