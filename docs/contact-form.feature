@@ -53,6 +53,15 @@ Feature: Contact form
     When the user reopens the contact form
     Then all the form fields should be empty
 
+  Scenario: POST request with fields is sent to api.hsforms.com when submitted successfully
+    Given the user is on the Contact Page
+    And the user opens the contact form
+    When the user fills the contact form with the valid data
+    And the user submits the form
+    Then a POST request should be sent to "api.hsforms.com"
+    And the POST request should include the valid user data
+    And the POST request should include all the modules
+
   Scenario Outline: Required fields validation
     Given the user is on the Contact Page
     And the user has opened the contact form

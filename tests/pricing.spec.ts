@@ -53,7 +53,7 @@ test.describe('Pricing form', () => {
     );
 
     test.fail(
-      'POST request with fields is send when submitted succesfully',
+      'POST request with fields is send to api.hsforms.com when submitted succesfully',
       async ({ pricingPage }) => {
         const fields = {
           firstName: faker.person.firstName(),

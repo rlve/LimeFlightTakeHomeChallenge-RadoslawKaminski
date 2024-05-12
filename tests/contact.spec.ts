@@ -116,7 +116,7 @@ test.describe('Contact form', () => {
       },
     );
 
-    test('POST request with fields is send when submitted succesfully', async ({
+    test('POST request with fields is send to api.hsforms.com when submitted succesfully', async ({
       contactPage,
     }) => {
       await contactPage.openContactForm();
@@ -133,7 +133,6 @@ test.describe('Contact form', () => {
       await contactPage.submit();
       const request = await requestPromise;
 
-      console.log(request.postDataJSON());
       contactPage.areFieldsInRequest(request, 'firstname', data.firstName);
       contactPage.areFieldsInRequest(request, 'lastname', data.lastName);
       contactPage.areFieldsInRequest(request, 'email', data.email);

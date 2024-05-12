@@ -25,6 +25,16 @@ Feature: Pricing form interaction
     When the user reopens the form
     Then the form should be cleared
 
+  Scenario: POST request with fields is sent to api.hsforms.com when submitted successfully
+    Given the user is on the Pricing Page
+    When the user fills the pricing form with the valid data
+    And the user enters the price factors
+    And the user submits the form
+    Then a POST request should be sent to "api.hsforms.com"
+    And the POST request should include the user data
+    And the POST request should include all the modules
+    And the POST request should include the price factors
+
   Scenario Outline: Required fields validation for pricing form
     Given the user is on the Pricing Page
     And the "<field>" field is empty
