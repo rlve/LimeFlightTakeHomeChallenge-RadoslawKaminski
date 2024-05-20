@@ -8,7 +8,7 @@ Take home challenge for [LimeFlight Take Home Challenge QA](https://github.com/y
 - **Scope**: Testing focused on the Contact and Pricing forms
 - **Type of Tests**: Functional tests (other types of tests have not been considered)
 - **Browsers**: Tested only on Chromium; scenarios have not been tested or adapted for other browsers
-- **Viewports**: Tested only in browser viewports; scenarios have not been tested or adapted for mobile viewports
+- **Viewports**: Tested only in desktop browser viewports; scenarios have not been tested or adapted for mobile viewports
 
 ## Test Cases
 
