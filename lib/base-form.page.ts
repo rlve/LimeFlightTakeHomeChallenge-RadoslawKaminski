@@ -99,9 +99,11 @@ export class BaseFormPage {
   // Actions
 
   async tryCloseCookiesPopUp() {
-    try {
-      await this.allowAllCookies.click({ timeout: 2000 });
-    } catch (error) {}
+    if (!process.env.CI) {
+      try {
+        await this.allowAllCookies.click({ timeout: 2000 });
+      } catch (error) {}
+    }
   }
 
   async assertFormOpen() {
